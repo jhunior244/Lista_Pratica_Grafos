@@ -11,7 +11,7 @@ namespace lista_grafos
             ArquivoGrafo arquivoGrafo = new ArquivoGrafo();
             Grafo grafoNaoDirigido = arquivoGrafo.setarGrafo(objParaLeitura);
 
-            grafoNaoDirigido.isAdjacente(grafoNaoDirigido.vetorVertices[0], grafoNaoDirigido.vetorVertices[1]);
+            grafoNaoDirigido.getAGMPrim(grafoNaoDirigido.vetorVertices[0]);
 
             objParaLeitura = new StreamReader(@"grafoDirigido.txt");
             arquivoGrafo = new ArquivoGrafo();
