@@ -23,8 +23,8 @@ namespace lista_grafos
 
             aresta.ligaVerticeGrafoNaoDirigido(vertice1, vertice2, int.Parse(dados[2]));
 
-            grafo.adicionaVerticeGrafoNaoDirigido(grafo, vertice1);
-            grafo.adicionaVerticeGrafoNaoDirigido(grafo, vertice2);
+            grafo.adicionaVertice(grafo, vertice1);
+            grafo.adicionaVertice(grafo, vertice2);
         }
 
         public void setaVerticeGrafoDirigido(Grafo grafo, string[] dados)
@@ -43,13 +43,13 @@ namespace lista_grafos
             if (direcaoAresta == 1)
             {
                 aresta.ligaVerticeGrafoDirigido(vertice1, vertice2, int.Parse(dados[2]));
-                grafo.adicionaVerticeGrafoNaoDirigido(grafo, vertice1);
+                grafo.adicionaVertice(grafo, vertice1);
                 return;
             }
             else if (direcaoAresta == -1)
             {
                 aresta.ligaVerticeGrafoDirigido(vertice2, vertice1, int.Parse(dados[2]));
-                grafo.adicionaVerticeGrafoNaoDirigido(grafo, vertice2);
+                grafo.adicionaVertice(grafo, vertice2);
                 return;
             }
 

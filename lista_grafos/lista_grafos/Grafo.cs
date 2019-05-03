@@ -13,7 +13,7 @@ namespace lista_grafos
             this.vetorVertices = new Vertice[tamanhoGrafo];
         }
         //lembrar de tirar da classe arquivoGrafo
-        public void adicionaVerticeGrafoNaoDirigido(Grafo grafo, Vertice vertice)
+        public void adicionaVertice(Grafo grafo, Vertice vertice)
         {
             for (int i = 0; i < grafo.vetorVertices.Length; i++)
             {
@@ -196,8 +196,8 @@ namespace lista_grafos
                     for (int j = 0; j < listaVerticesSemLigacao.Count; j++)
                     {
                         aresta.ligaVerticeGrafoNaoDirigido(vetorVertices[i], listaVerticesSemLigacao[j], 1);
-                        adicionaVerticeGrafoNaoDirigido(grafoComplementar, vetorVertices[i]);
-                        adicionaVerticeGrafoNaoDirigido(grafoComplementar, listaVerticesSemLigacao[j]);
+                        adicionaVertice(grafoComplementar, vetorVertices[i]);
+                        adicionaVertice(grafoComplementar, listaVerticesSemLigacao[j]);
                     }
                 }
             }
@@ -295,8 +295,8 @@ namespace lista_grafos
                     aresta.ligaVerticeGrafoNaoDirigido(verticePai, verticeFilho, menorPeso);//liga vertice pai a vertice filho
 
                     //adiciona vertices a arvore geradora minima
-                    adicionaVerticeGrafoNaoDirigido(arvoreGeradoraMinima, verticePai);
-                    adicionaVerticeGrafoNaoDirigido(arvoreGeradoraMinima, verticeFilho);
+                    adicionaVertice(arvoreGeradoraMinima, verticePai);
+                    adicionaVertice(arvoreGeradoraMinima, verticeFilho);
 
                     //adiciona nome vertice a lista ordenada por tempo de inserção na arvore
                     ordemAdicaoArvore.Add(verticeFilho.nomeVertice);
