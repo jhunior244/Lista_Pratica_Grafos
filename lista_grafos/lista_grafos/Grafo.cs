@@ -13,18 +13,17 @@ namespace lista_grafos
             this.vetorVertices = new Vertice[tamanhoGrafo];
         }
         //lembrar de tirar da classe arquivoGrafo
-        private void adicionaVerticeGrafoNaoDirigido(Grafo grafo, Vertice vertice)
+        public void adicionaVerticeGrafoNaoDirigido(Grafo grafo, Vertice vertice)
         {
             for (int i = 0; i < grafo.vetorVertices.Length; i++)
             {
-                if (grafo.vetorVertices[i] != null && grafo.vetorVertices[i].nomeVertice == vertice.nomeVertice)
-                {
-                    grafo.vetorVertices[i].listaAresta.Add(vertice.listaAresta[0]);
-                    return;
-                }
-                else if (grafo.vetorVertices[i] == null)
+                if (grafo.vetorVertices[i] == null)
                 {
                     grafo.vetorVertices[i] = vertice;
+                    return;
+                }
+                else if (grafo.vetorVertices[i].nomeVertice == vertice.nomeVertice)
+                {
                     return;
                 }
             }
@@ -229,10 +228,7 @@ namespace lista_grafos
             Vertice[] pais = new Vertice[this.vetorVertices.Length];
             List<string> ordemAdicaoArvore = new List<string>();
             ordemAdicaoArvore.Add(verticeInicial.nomeVertice);
-
-            Vertice verticePai = new Vertice();
-            Vertice verticeFilho = new Vertice();
-
+            
             bool primeiroVerticeEncontrado = true, fimLoop = false;
             int origem = 0, destino = 0, menorPeso = 0, posicaoAnteriorVisitada = 0;
 
@@ -241,6 +237,7 @@ namespace lista_grafos
                 if (this.vetorVertices[i] == verticeInicial)
                 {
                     pais[i] = verticeInicial;
+                    this.vetorVertices[i].visitado = true;
                 }
                 else
                 {
@@ -252,20 +249,18 @@ namespace lista_grafos
                 //percorre todos os vertices
                 for (int i = 0; i < this.vetorVertices.Length; i++)
                 {
-                    if (pais[i] != null)//acha vertice ja visitado
-                    {   //percorre todos vizinhos do vertice já visitado
-                        for (int j = 0; j < pais[i].listaAresta.Count; j++)
+                    if (pais[i] != null)//acha vertice que ja possui pai
+                    {   //percorre todos vizinhos do vertice que ja tem pai
+                        for (int j = 0; j < this.vetorVertices[i].listaAresta.Count; j++)
                         {   //procura vertices nao visitados para indicar seus pais
-                            if (pais[findIndiceVerticeNoGrafo(pais[i].listaAresta[j].verticeIncidente)] == null)
+                            if (this.vetorVertices[i].listaAresta[j].verticeIncidente.visitado == false)
                             {   //caso esse seja o primeiro vizinho nao visitado, seta ele como destino
                                 if (primeiroVerticeEncontrado)
                                 {
                                     menorPeso = this.vetorVertices[i].listaAresta[j].peso;
                                     origem = i;////////////////parametro vertice indo errado para o find, deve usar o vertice original do grafo
-                                    destino = findIndiceVerticeNoGrafo(pais[i].listaAresta[j].verticeIncidente);
+                                    destino = findIndiceVerticeNoGrafo(this.vetorVertices[i].listaAresta[j].verticeIncidente);
                                     primeiroVerticeEncontrado = false;
-                                    //pais[i].listaAresta[j].verticeIncidente.visitado = true;
-                                    //posicaoAnteriorVisitada = j;
                                 }
                                 else
                                 {   //se este nao for mais o primeiro vertice encontrado verifica se o caminho para ele é menor
@@ -273,9 +268,7 @@ namespace lista_grafos
                                     {
                                         menorPeso = this.vetorVertices[i].listaAresta[j].peso;
                                         origem = i;
-                                        destino = findIndiceVerticeNoGrafo(pais[i].listaAresta[j].verticeIncidente);
-                                        //pais[i].listaAresta[j].verticeIncidente.visitado = true;
-                                        //this.vetorVertices[i].listaAresta[posicaoAnteriorVisitada].verticeIncidente.visitado = false;
+                                        destino = findIndiceVerticeNoGrafo(this.vetorVertices[i].listaAresta[j].verticeIncidente);
                                     }
                                 }
                             }
@@ -292,10 +285,14 @@ namespace lista_grafos
                     Aresta aresta = new Aresta();
                     pais[destino] = this.vetorVertices[origem];//adiciona pai na posicao do filho correspondente do filho no grafo
 
+                    Vertice verticePai = new Vertice();
+                    Vertice verticeFilho = new Vertice();
+
                     verticePai.nomeVertice = this.vetorVertices[origem].nomeVertice;
                     verticeFilho.nomeVertice = this.vetorVertices[destino].nomeVertice;
+                    this.vetorVertices[destino].visitado = true;
 
-                    aresta.ligaVerticeGrafoNaoDirigido(verticePai, verticeFilho, menorPeso);//lifa vertice pai a vertice filho
+                    aresta.ligaVerticeGrafoNaoDirigido(verticePai, verticeFilho, menorPeso);//liga vertice pai a vertice filho
 
                     //adiciona vertices a arvore geradora minima
                     adicionaVerticeGrafoNaoDirigido(arvoreGeradoraMinima, verticePai);

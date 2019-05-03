@@ -37,10 +37,24 @@ namespace lista_grafos
             vertice1.nomeVertice = dados[0];
             vertice2.nomeVertice = dados[1];
 
+            for(int i =0; i < grafo.vetorVertices.Length; i++)
+            {
+                if(grafo.vetorVertices[i] != null && grafo.vetorVertices[i].nomeVertice == dados[0])
+                {
+                    vertice1 = null;
+                    vertice1 = grafo.vetorVertices[i];
+                }
+                else if(grafo.vetorVertices[i] != null && grafo.vetorVertices[i].nomeVertice == dados[1])
+                {
+                    vertice2 = null;
+                    vertice2 = grafo.vetorVertices[i];
+                }
+            }
+
             aresta.ligaVerticeGrafoNaoDirigido(vertice1, vertice2, int.Parse(dados[2]));
 
-            adicionaVerticeGrafoNaoDirigido(grafo, vertice1);
-            adicionaVerticeGrafoNaoDirigido(grafo, vertice2);
+            grafo.adicionaVerticeGrafoNaoDirigido(grafo, vertice1);
+            grafo.adicionaVerticeGrafoNaoDirigido(grafo, vertice2);
         }
 
         private void setaVerticeGrafoDirigido(Grafo grafo, string[] dados)
@@ -57,33 +71,18 @@ namespace lista_grafos
             if(direcaoAresta == 1)
             {
                 aresta.ligaVerticeGrafoDirigido(vertice1, vertice2, int.Parse(dados[2]));
-                adicionaVerticeGrafoNaoDirigido(grafo, vertice1);
+                grafo.adicionaVerticeGrafoNaoDirigido(grafo, vertice1);
                 return;
             }
             else if( direcaoAresta == -1)
             {
                 aresta.ligaVerticeGrafoDirigido(vertice2, vertice1, int.Parse(dados[2]));
-                adicionaVerticeGrafoNaoDirigido(grafo, vertice2);
+                grafo.adicionaVerticeGrafoNaoDirigido(grafo, vertice2);
                 return;
             }
             
         }
 
-        private void adicionaVerticeGrafoNaoDirigido(Grafo grafo, Vertice vertice)
-        {
-            for (int i = 0; i < grafo.vetorVertices.Length; i++)
-            {
-                if (grafo.vetorVertices[i] != null && grafo.vetorVertices[i].nomeVertice == vertice.nomeVertice)
-                {
-                    grafo.vetorVertices[i].listaAresta.Add(vertice.listaAresta[0]);
-                    return;
-                }
-                else if (grafo.vetorVertices[i] == null)
-                {
-                    grafo.vetorVertices[i] = vertice;
-                    return;
-                }
-            }
-        }
+       
     }
 }
