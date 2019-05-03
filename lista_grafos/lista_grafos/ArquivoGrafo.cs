@@ -68,7 +68,21 @@ namespace lista_grafos
 
             int direcaoAresta = int.Parse(dados[3]);
 
-            if(direcaoAresta == 1)
+            for (int i = 0; i < grafo.vetorVertices.Length; i++)
+            {
+                if (grafo.vetorVertices[i] != null && grafo.vetorVertices[i].nomeVertice == dados[0])
+                {
+                    vertice1 = null;
+                    vertice1 = grafo.vetorVertices[i];
+                }
+                else if (grafo.vetorVertices[i] != null && grafo.vetorVertices[i].nomeVertice == dados[1])
+                {
+                    vertice2 = null;
+                    vertice2 = grafo.vetorVertices[i];
+                }
+            }
+
+            if (direcaoAresta == 1)
             {
                 aresta.ligaVerticeGrafoDirigido(vertice1, vertice2, int.Parse(dados[2]));
                 grafo.adicionaVerticeGrafoNaoDirigido(grafo, vertice1);
