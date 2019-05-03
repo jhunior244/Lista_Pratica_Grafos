@@ -230,7 +230,7 @@ namespace lista_grafos
             ordemAdicaoArvore.Add(verticeInicial.nomeVertice);
             
             bool primeiroVerticeEncontrado = true, fimLoop = false;
-            int origem = 0, destino = 0, menorPeso = 0, posicaoAnteriorVisitada = 0;
+            int origem = 0, destino = 0, menorPeso = 0;
 
             for (int i = 0; i < this.vetorVertices.Length; i++)
             {   //coloca o vertice inicial como pai dele mesmo
