@@ -55,7 +55,9 @@ namespace lista_grafos
 
         }
 
-        private void verificaSeGrafoJaContemVertices(Grafo grafo, ref Vertice vertice1, ref Vertice vertice2, string[] dados)
+        
+
+        public void verificaSeGrafoJaContemVertices(Grafo grafo, ref Vertice vertice1, ref Vertice vertice2, string[] dados)
         {
             for (int i = 0; i < grafo.vetorVertices.Length; i++)
             {
