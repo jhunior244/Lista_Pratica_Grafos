@@ -52,10 +52,9 @@ namespace lista_grafos
                 grafo.adicionaVertice(grafo, vertice2);
                 return;
             }
-
         }
 
-        private void verificaSeGrafoJaContemVertices(Grafo grafo, ref Vertice vertice1, ref Vertice vertice2, string[] dados)
+        public static void verificaSeGrafoJaContemVertices(Grafo grafo, ref Vertice vertice1, ref Vertice vertice2, string[] dados)
         {
             for (int i = 0; i < grafo.vetorVertices.Length; i++)
             {

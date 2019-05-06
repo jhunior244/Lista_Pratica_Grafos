@@ -12,7 +12,7 @@ namespace lista_grafos
         {
             this.vetorVertices = new Vertice[tamanhoGrafo];
         }
-        //lembrar de tirar da classe arquivoGrafo
+
         public void adicionaVertice(Grafo grafo, Vertice vertice)
         {
             for (int i = 0; i < grafo.vetorVertices.Length; i++)
@@ -122,18 +122,23 @@ namespace lista_grafos
             int verticesVisitados = 0;
             Vertice vertice = new Vertice();
             vertice = this.vetorVertices[0];
-            vertice.visitado = true;
-            verticesVisitados++;
+            if (vertice != null)
+            {
+                vertice.visitado = true;
+                verticesVisitados++;
+            }
             for (int i = 0; i < this.vetorVertices.Length; i++)
             {
                 for (int j = 0; j < vertice.listaAresta.Count; j++)
                 {
-                    vertice.listaAresta[j].verticeIncidente.visitado = true;
-                    verticesVisitados++;
+                    if (vertice != null && vertice.listaAresta[j].verticeIncidente.visitado == false)
+                    {
+                        vertice.listaAresta[j].verticeIncidente.visitado = true;
+                        verticesVisitados++;
+                    }
                 }
                 vertice = findVerticeComAdjacenteNaoVisitado(vertice);
             }
-
             return verticesVisitados == this.vetorVertices.Length ? true : false;
         }
 
@@ -192,31 +197,57 @@ namespace lista_grafos
             {
                 if (this.vetorVertices[i].listaAresta.Count < this.vetorVertices.Length - 1)
                 {
-                    List<Vertice> listaVerticesSemLigacao = findVerticesSemLigacao(this.vetorVertices[i].listaAresta);
-                    for (int j = 0; j < listaVerticesSemLigacao.Count; j++)
+                    List<Vertice> listaVerticesSemLigacao = findVerticesSemLigacao(this.vetorVertices[i]);
+                    for (int j = 0; j < listaVerticesSemLigacao.Count - 1; j++)
                     {
-                        aresta.ligaVerticeGrafoNaoDirigido(vetorVertices[i], listaVerticesSemLigacao[j], 1);
-                        adicionaVertice(grafoComplementar, vetorVertices[i]);
-                        adicionaVertice(grafoComplementar, listaVerticesSemLigacao[j]);
+                        string[] dados = new string[] { listaVerticesSemLigacao[0].nomeVertice, listaVerticesSemLigacao[j + 1].nomeVertice };
+                        Vertice vertice1 = listaVerticesSemLigacao[0];
+                        Vertice vertice2 = listaVerticesSemLigacao[j + 1];
+
+                        Vertice.verificaSeGrafoJaContemVertices(grafoComplementar, ref vertice1, ref vertice2, dados);
+                        if (!verticeJaLigado(vertice1.listaAresta, vertice2) && !verticeJaLigado(vertice2.listaAresta, vertice1))
+                        {
+                            aresta.ligaVerticeGrafoNaoDirigido(vertice1, vertice2, 1);
+
+                        }
+                        adicionaVertice(grafoComplementar, vertice1);
+                        adicionaVertice(grafoComplementar, vertice2);
                     }
                 }
             }
             return grafoComplementar;
         }
 
-        private List<Vertice> findVerticesSemLigacao(List<Aresta> listaArestas)
+        private bool verticeJaLigado(List<Aresta> listaArestas, Vertice vertice)
+        {
+            bool verticeJaLigado = false;
+            listaArestas.ForEach(aresta => { if (aresta.verticeIncidente.Equals(vertice)) { verticeJaLigado = true; } });
+            return verticeJaLigado;
+        }
+
+        private List<Vertice> findVerticesSemLigacao(Vertice vertice)
         {
             List<Vertice> listaVerticesSemLigacao = new List<Vertice>();
 
-            for (int i = 0; i < this.vetorVertices.Length; i++)
+            List<Vertice> listaVerticesLigados = new List<Vertice>();
+
+            Vertice verticeParaComplementar = new Vertice();
+            verticeParaComplementar.nomeVertice = vertice.nomeVertice;
+            listaVerticesSemLigacao.Add(verticeParaComplementar);
+
+            vertice.listaAresta.ForEach(delegate (Aresta aresta)
             {
-                for (int j = 0; j < this.vetorVertices.Length; j++)
+                listaVerticesLigados.Add(aresta.verticeIncidente);
+            });
+
+            for (int j = 0; j < this.vetorVertices.Length; j++)
+            {
+                if (!listaVerticesLigados.Contains(this.vetorVertices[j])
+                    && !this.vetorVertices[j].Equals(vertice))
                 {
-                    if (listaArestas[i].verticeIncidente != this.vetorVertices[j]
-                        && !listaVerticesSemLigacao.Contains(this.vetorVertices[j]))
-                    {
-                        listaVerticesSemLigacao.Add(this.vetorVertices[j]);
-                    }
+                    verticeParaComplementar = new Vertice();
+                    verticeParaComplementar.nomeVertice = this.vetorVertices[j].nomeVertice;
+                    listaVerticesSemLigacao.Add(verticeParaComplementar);
                 }
             }
             return listaVerticesSemLigacao;
@@ -228,7 +259,7 @@ namespace lista_grafos
             Vertice[] pais = new Vertice[this.vetorVertices.Length];
             List<string> ordemAdicaoArvore = new List<string>();
             ordemAdicaoArvore.Add(verticeInicial.nomeVertice);
-            
+
             bool primeiroVerticeEncontrado = true, fimLoop = false;
             int origem = 0, destino = 0, menorPeso = 0;
 
@@ -258,7 +289,7 @@ namespace lista_grafos
                                 if (primeiroVerticeEncontrado)
                                 {
                                     menorPeso = this.vetorVertices[i].listaAresta[j].peso;
-                                    origem = i;////////////////parametro vertice indo errado para o find, deve usar o vertice original do grafo
+                                    origem = i;
                                     destino = findIndiceVerticeNoGrafo(this.vetorVertices[i].listaAresta[j].verticeIncidente);
                                     primeiroVerticeEncontrado = false;
                                 }
@@ -328,5 +359,176 @@ namespace lista_grafos
             return 0;
         }
 
+        public Grafo getAGMKruskal(Vertice verticeIncial)
+        {
+            Grafo arvoreGeradoraMinima = new Grafo(this.vetorVertices.Length);
+            Vertice[] pais = new Vertice[this.vetorVertices.Length];
+            Vertice[] arvore = new Vertice[this.vetorVertices.Length];
+            List<string> ordemAdicaoArvore = new List<string>();
+
+            bool primeiroVerticeEncontrado = true, fimLoop = false;
+            int origem = 0, destino = 0, menorPeso = 0;
+
+            for (int i = 0; i < this.vetorVertices.Length; i++)
+            {
+                arvore[i] = this.vetorVertices[i];
+                pais[i] = null;
+                if (this.vetorVertices[i].Equals(verticeIncial))
+                {
+
+                    pais[i] = verticeIncial;
+                }
+            }
+
+            while (!fimLoop)
+            {
+                //percorre todos os vertices
+                for (int i = 0; i < this.vetorVertices.Length; i++)
+                {
+                    for (int j = 0; j < this.vetorVertices[i].listaAresta.Count; j++)
+                    {   //verifica se o vertice no grafo ainda nao está conectado a árvore, se for o caso, verifica se sua aresta
+                        //tem o menor peso que todas ainda não adicionadas
+                        if (arvore[i] != arvore[findIndiceVerticeNoGrafo(this.vetorVertices[i].listaAresta[j].verticeIncidente)])
+
+                        {   //caso esse seja o primeiro vizinho nao visitado, seta ele como destino
+                            if (primeiroVerticeEncontrado)
+                            {
+                                menorPeso = this.vetorVertices[i].listaAresta[j].peso;
+                                origem = i;
+                                destino = findIndiceVerticeNoGrafo(this.vetorVertices[i].listaAresta[j].verticeIncidente);
+                                primeiroVerticeEncontrado = false;
+                            }
+                            else
+                            {   //se este nao for mais o primeiro vertice encontrado verifica se o caminho para ele é menor
+                                if (menorPeso > this.vetorVertices[i].listaAresta[j].peso)
+                                {
+                                    menorPeso = this.vetorVertices[i].listaAresta[j].peso;
+                                    origem = i;
+                                    destino = findIndiceVerticeNoGrafo(this.vetorVertices[i].listaAresta[j].verticeIncidente);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (primeiroVerticeEncontrado)
+                {
+                    fimLoop = true;
+                }
+
+                if (pais[origem] == null)
+                {
+                    pais[origem] = this.vetorVertices[destino];
+                    primeiroVerticeEncontrado = true;
+                }
+
+                else
+                {
+                    pais[destino] = this.vetorVertices[origem];
+                    primeiroVerticeEncontrado = true;
+                }
+
+                Aresta aresta = new Aresta();
+
+                Vertice verticePai = new Vertice();
+                Vertice verticeFilho = new Vertice();
+
+                verticePai = this.vetorVertices[origem];
+                verticeFilho = this.vetorVertices[destino];
+
+                aresta.ligaVerticeGrafoNaoDirigido(verticePai, verticeFilho, menorPeso);
+                menorPeso = int.MaxValue;
+
+                //adiciona vertices a arvore geradora minima
+                adicionaVertice(arvoreGeradoraMinima, verticePai);
+                adicionaVertice(arvoreGeradoraMinima, verticeFilho);
+
+                //adiciona nome vertice a lista ordenada por tempo de inserção na arvore
+                if (!ordemAdicaoArvore.Contains(verticePai.nomeVertice))
+                {
+                    ordemAdicaoArvore.Add(verticePai.nomeVertice);
+                }
+                if (!ordemAdicaoArvore.Contains(verticeFilho.nomeVertice))
+                {
+                    ordemAdicaoArvore.Add(verticeFilho.nomeVertice);
+                }
+
+                for (int i = 0; i < this.vetorVertices.Length; i++)
+                {
+                    //coloca vertice origem como chefe do vertice destino
+                    if (arvore[i] == arvore[destino])
+                    {
+                        arvore[i] = arvore[origem];
+                    }
+                }
+            }
+            imprimirOrdemIsercaoArvore(ordemAdicaoArvore);
+            return arvoreGeradoraMinima;
+        }
+
+        public int getCutVertices()
+        {
+            int totalCutVertices = 0;
+            for (int i = 0; i < this.vetorVertices.Length; i++)
+            {
+                List<Vertice> listaClonada = new List<Vertice>();
+                foreach (var vertice in this.vetorVertices)
+                {
+                    listaClonada.Add(vertice);
+                }
+
+                Vertice verticeAExcluir = listaClonada[i];
+                listaClonada.Remove(listaClonada[i]);
+                excluiVertice(verticeAExcluir, listaClonada);
+                if (!isConexo(listaClonada))
+                {
+                    totalCutVertices++;
+                }
+
+            }
+
+            return totalCutVertices;
+        }
+
+        private void excluiVertice(Vertice verticeAExcluir, List<Vertice> listaClonada)
+        {
+            for (int i = 0; i < listaClonada.Count; i++)
+            {
+                for (int j = 0; j < listaClonada[i].listaAresta.Count; j++)
+                {
+                    if (listaClonada[i].listaAresta[j].verticeIncidente.Equals(verticeAExcluir))
+                    {
+                        listaClonada[i].listaAresta.Remove(listaClonada[i].listaAresta[j]);
+                    }
+                }
+            }
+        }
+
+        //fiz uma sobrecarga do isConexo para usar com minha copia do grafo, pois com vetor nao é possivel
+        //adicionar e remover vertices e ao mesmo tempo diminuir o tamanho do vetor e isso nao deixaria verificar os cut vertices
+        public bool isConexo(List<Vertice> grafo)
+        {
+            int verticesVisitados = 0;
+            Vertice vertice = new Vertice();
+            vertice = grafo[0];
+            if (vertice != null)
+            {
+                vertice.visitado = true;
+                verticesVisitados++;
+            }
+            for (int i = 0; i < grafo.Count; i++)
+            {
+                for (int j = 0; j < vertice.listaAresta.Count; j++)
+                {
+                    if (vertice != null && vertice.listaAresta[j].verticeIncidente.visitado == false)
+                    {
+                        vertice.listaAresta[j].verticeIncidente.visitado = true;
+                        verticesVisitados++;
+                    }
+                }
+                vertice = findVerticeComAdjacenteNaoVisitado(vertice);
+            }
+            return verticesVisitados == grafo.Count ? true : false;
+        }
     }
 }

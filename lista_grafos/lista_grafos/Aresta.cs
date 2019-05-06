@@ -32,7 +32,5 @@ namespace lista_grafos
             this.verticeIncidente = sucessor;
             antecessor.listaAresta.Add(this);
         }
-
-        
     }
 }

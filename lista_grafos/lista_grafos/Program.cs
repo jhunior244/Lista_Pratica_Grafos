@@ -11,7 +11,15 @@ namespace lista_grafos
             ArquivoGrafo arquivoGrafo = new ArquivoGrafo();
             Grafo grafoNaoDirigido = arquivoGrafo.setarGrafo(objParaLeitura);
 
+            //bool resultado = grafoNaoDirigido.isConexo();
+            int totalCutVertices = grafoNaoDirigido.getCutVertices();
             grafoNaoDirigido.getAGMPrim(grafoNaoDirigido.vetorVertices[0]);
+
+            grafoNaoDirigido.getAGMKruskal(grafoNaoDirigido.vetorVertices[0]);
+
+            objParaLeitura = new StreamReader(@"testeComplementar.txt");
+            Grafo grafoComplementar = arquivoGrafo.setarGrafo(objParaLeitura);
+            grafoComplementar = grafoComplementar.getComplementar();
 
             objParaLeitura = new StreamReader(@"grafoDirigido.txt");
             arquivoGrafo = new ArquivoGrafo();
