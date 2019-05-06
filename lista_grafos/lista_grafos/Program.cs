@@ -12,7 +12,7 @@ namespace lista_grafos
             Grafo grafoNaoDirigido = arquivoGrafo.setarGrafo(objParaLeitura);
 
             //bool resultado = grafoNaoDirigido.isConexo();
-            int totalCutVertices = grafoNaoDirigido.getCutVertices();
+            //int totalCutVertices = grafoNaoDirigido.getCutVertices();
             grafoNaoDirigido.getAGMPrim(grafoNaoDirigido.vetorVertices[0]);
 
             grafoNaoDirigido.getAGMKruskal(grafoNaoDirigido.vetorVertices[0]);

@@ -30,62 +30,6 @@ namespace lista_grafos
             }
         }
 
-        public bool hasCiclo()
-        {
-
-
-            return true;
-        }
-
-        //Incremento todas as arestas do v1, após isso subtraio com as arestas de entrada.
-        public int GetGrauSaida(Vertice v1)
-        {
-            int grau_saida = 0;
-            int j = 0;
-
-            if (isIsolado(v1) == true)
-            {
-                grau_saida = 0;
-            }
-            else if (isIsolado(v1) == false)
-            {
-                for (int i = 0; i < v1.listaAresta.Count; i++)
-                {
-                    while(v1.listaAresta[i] != null)
-                    {
-                        j++;
-                    }
-                }
-
-                grau_saida = j++ - GetGrauEntrada(v1);
-            }
-
-            return grau_saida;
-        }
-
-        //O primeiro passo é verificar se o vertice como parâmentro ja foi visitado, se for
-        //percorremos a sua lista de aresta e vamos contar todos os vértices incidente dele.
-        public int GetGrauEntrada(Vertice v1)
-        {
-            int grau_entrada = 0;
-
-            if (v1.visitado == false)
-            {
-                grau_entrada = 0;
-            }
-            else if (v1.visitado == true)
-            {
-                for (int i = 0; i < v1.listaAresta.Count; i++)
-                {
-                    while (v1.listaAresta[i].verticeIncidente != null)
-                    {
-                        grau_entrada++;
-                    }
-                }
-            }
-
-            return grau_entrada;
-        }
 
         //procura o vertice2 na lista de arestas do vertice1, se alguma delas ligar a ele 
         //o vertice é adjacente
@@ -276,14 +220,14 @@ namespace lista_grafos
             }
             return grafoComplementar;
         }
-
+        //verifica se vertice ja está ligado para nao adicionar duas vezes no complementar
         private bool verticeJaLigado(List<Aresta> listaArestas, Vertice vertice)
         {
             bool verticeJaLigado = false;
             listaArestas.ForEach(aresta => { if (aresta.verticeIncidente.Equals(vertice)) { verticeJaLigado = true; } });
             return verticeJaLigado;
         }
-
+        //encontra vertices no grafo que nao se conectam com o vertice de parametro
         private List<Vertice> findVerticesSemLigacao(Vertice vertice)
         {
             List<Vertice> listaVerticesSemLigacao = new List<Vertice>();
@@ -394,18 +338,33 @@ namespace lista_grafos
                     primeiroVerticeEncontrado = true;
                 }
             }
-            imprimirOrdemIsercaoArvore(ordemAdicaoArvore);
+            imprimeResultadoPrimEKrukal(ordemAdicaoArvore, pais);
             return arvoreGeradoraMinima;
         }
 
-        private void imprimirOrdemIsercaoArvore(List<string> ordemAdicaoArvore)
+        private void imprimeResultadoPrimEKrukal(List<string> ordemAdicaoArvore, Vertice[] pais)
         {
+            Console.WriteLine();
+            string stringPais = "";
+            string filhos = "";
+            for (int i = 0; i < this.vetorVertices.Length; i++)
+            {
+                filhos += this.vetorVertices[i].nomeVertice + "-";
+                stringPais += pais[i].nomeVertice + "-";
+            }
+
+            Console.WriteLine(filhos);
+            Console.WriteLine(stringPais);
+            Console.WriteLine();
+
             foreach (var nomeVertice in ordemAdicaoArvore)
             {
-                Console.WriteLine(nomeVertice);
+                Console.Write(nomeVertice + " - ");
             }
-        }
 
+            Console.WriteLine();
+        }
+        //encontra o indice no grafo do respectivo vertice
         private int findIndiceVerticeNoGrafo(Vertice vertice)
         {
             for (int i = 0; i < this.vetorVertices.Length; i++)
@@ -432,9 +391,8 @@ namespace lista_grafos
             {
                 arvore[i] = this.vetorVertices[i];
                 pais[i] = null;
-                if (this.vetorVertices[i].Equals(verticeIncial))
+                if (this.vetorVertices[i].Equals(verticeIncial))//seta apenas o vertice inicial como pai dele mesmo
                 {
-
                     pais[i] = verticeIncial;
                 }
             }
@@ -474,7 +432,7 @@ namespace lista_grafos
                 {
                     fimLoop = true;
                 }
-
+                //seta pais
                 if (pais[origem] == null)
                 {
                     pais[origem] = this.vetorVertices[destino];
@@ -521,15 +479,19 @@ namespace lista_grafos
                     }
                 }
             }
-            imprimirOrdemIsercaoArvore(ordemAdicaoArvore);
+            imprimeResultadoPrimEKrukal(ordemAdicaoArvore, pais);
             return arvoreGeradoraMinima;
         }
 
+        //na teoria o metodo funcionaria com a ajuda do metodo isConexo
+        //seriam retirados todos vertices do grafo, um por vez, e verificaria se o grafo ainda permanecia conexo
+        //no entanto, como o grafo é orientado a objeto ele acaba apagando as referencias e como nao consegui clonar o grafo para
+        //manipula-lo, o metodo nao funcionou
         public int getCutVertices()
         {
             int totalCutVertices = 0;
             for (int i = 0; i < this.vetorVertices.Length; i++)
-            {
+            {   //clona grafo
                 List<Vertice> listaClonada = new List<Vertice>();
                 foreach (var vertice in this.vetorVertices)
                 {
@@ -537,9 +499,9 @@ namespace lista_grafos
                 }
 
                 Vertice verticeAExcluir = listaClonada[i];
-                listaClonada.Remove(listaClonada[i]);
+                listaClonada.Remove(listaClonada[i]);//remove o vertice retirado da referencia de todas arestas que ligavam a ele
                 excluiVertice(verticeAExcluir, listaClonada);
-                if (!isConexo(listaClonada))
+                if (!isConexo(listaClonada))//verifica se é conexo apos a retirada do vertice
                 {
                     totalCutVertices++;
                 }
@@ -588,6 +550,63 @@ namespace lista_grafos
                 vertice = findVerticeComAdjacenteNaoVisitado(vertice);
             }
             return verticesVisitados == grafo.Count ? true : false;
+        }
+
+        public bool hasCiclo()
+        {
+
+
+            return true;
+        }
+
+        //Incremento todas as arestas do v1, após isso subtraio com as arestas de entrada.
+        public int GetGrauSaida(Vertice v1)
+        {
+            int grau_saida = 0;
+            int j = 0;
+
+            if (isIsolado(v1) == true)
+            {
+                grau_saida = 0;
+            }
+            else if (isIsolado(v1) == false)
+            {
+                for (int i = 0; i < v1.listaAresta.Count; i++)
+                {
+                    while (v1.listaAresta[i] != null)
+                    {
+                        j++;
+                    }
+                }
+
+                grau_saida = j++ - GetGrauEntrada(v1);
+            }
+
+            return grau_saida;
+        }
+
+        //O primeiro passo é verificar se o vertice como parâmentro ja foi visitado, se for
+        //percorremos a sua lista de aresta e vamos contar todos os vértices incidente dele.
+        public int GetGrauEntrada(Vertice v1)
+        {
+            int grau_entrada = 0;
+
+            if (v1.visitado == false)
+            {
+                grau_entrada = 0;
+            }
+            else if (v1.visitado == true)
+            {
+                for (int i = 0; i < v1.listaAresta.Count; i++)
+                {
+                    while (v1.listaAresta[i].verticeIncidente != null)
+                    {
+                        grau_entrada++;
+                    }
+                }
+            }
+
+            return grau_entrada;
         }
     }
 }
