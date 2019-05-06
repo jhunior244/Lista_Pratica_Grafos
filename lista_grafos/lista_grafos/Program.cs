@@ -24,7 +24,7 @@ namespace lista_grafos
             objParaLeitura = new StreamReader(@"grafoDirigido.txt");
             arquivoGrafo = new ArquivoGrafo();
             Grafo grafoDirigido = arquivoGrafo.setarGrafo(objParaLeitura);
-
+            
             Console.ReadKey();
         }
     }

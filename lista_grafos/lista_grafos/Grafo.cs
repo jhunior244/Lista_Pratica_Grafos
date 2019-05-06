@@ -7,6 +7,7 @@ namespace lista_grafos
     class Grafo
     {
         public Vertice[] vetorVertices;
+        public Vertice obj;
 
         public Grafo(int tamanhoGrafo)
         {
@@ -27,6 +28,63 @@ namespace lista_grafos
                     return;
                 }
             }
+        }
+
+        public bool hasCiclo()
+        {
+
+
+            return true;
+        }
+
+        //Incremento todas as arestas do v1, após isso subtraio com as arestas de entrada.
+        public int GetGrauSaida(Vertice v1)
+        {
+            int grau_saida = 0;
+            int j = 0;
+
+            if (isIsolado(v1) == true)
+            {
+                grau_saida = 0;
+            }
+            else if (isIsolado(v1) == false)
+            {
+                for (int i = 0; i < v1.listaAresta.Count; i++)
+                {
+                    while(v1.listaAresta[i] != null)
+                    {
+                        j++;
+                    }
+                }
+
+                grau_saida = j++ - GetGrauEntrada(v1);
+            }
+
+            return grau_saida;
+        }
+
+        //O primeiro passo é verificar se o vertice como parâmentro ja foi visitado, se for
+        //percorremos a sua lista de aresta e vamos contar todos os vértices incidente dele.
+        public int GetGrauEntrada(Vertice v1)
+        {
+            int grau_entrada = 0;
+
+            if (v1.visitado == false)
+            {
+                grau_entrada = 0;
+            }
+            else if (v1.visitado == true)
+            {
+                for (int i = 0; i < v1.listaAresta.Count; i++)
+                {
+                    while (v1.listaAresta[i].verticeIncidente != null)
+                    {
+                        grau_entrada++;
+                    }
+                }
+            }
+
+            return grau_entrada;
         }
 
         //procura o vertice2 na lista de arestas do vertice1, se alguma delas ligar a ele 
@@ -55,6 +113,7 @@ namespace lista_grafos
 
         public bool isPendente(Vertice vertice)
         {
+
             return vertice.listaAresta.Count == 1 ? true : false;
         }
 
