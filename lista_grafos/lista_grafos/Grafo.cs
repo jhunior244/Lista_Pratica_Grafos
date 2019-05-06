@@ -83,7 +83,14 @@ namespace lista_grafos
 
         public bool isNulo()
         {
-            return this == null ? true : false;
+            for (int i = 0; i < this.vetorVertices.Length; i++)
+            {
+                if(this.vetorVertices[i].listaAresta.Count > 0)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
 
