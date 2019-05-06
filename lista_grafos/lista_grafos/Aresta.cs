@@ -12,7 +12,6 @@ namespace lista_grafos
 
         public void ligaVerticeGrafoNaoDirigido(Vertice vertice1, Vertice vertice2, int peso)
         {
-            //seta peso
             Aresta aresta1 = new Aresta();
             Aresta aresta2 = new Aresta();
             aresta1.peso = peso;
@@ -27,7 +26,6 @@ namespace lista_grafos
 
         public void ligaVerticeGrafoDirigido(Vertice antecessor, Vertice sucessor, int peso)
         {
-            //instancia uma aresta, indica seu peso e o seu incidente
             this.peso = peso;
             this.verticeIncidente = sucessor;
             antecessor.listaAresta.Add(this);

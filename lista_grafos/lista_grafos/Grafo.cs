@@ -552,11 +552,29 @@ namespace lista_grafos
             return verticesVisitados == grafo.Count ? true : false;
         }
 
+        //Verificar todos os vértices do grafo, se todos eles tiverem pelo menos 1 grau de entrada e saída, retorna true.
         public bool hasCiclo()
         {
+            Vertice obj;
+            bool ciclo = false;
 
+            for (int i = 0; i < vetorVertices.Length; i++)
+            {
+                obj = vetorVertices[i];
 
-            return true;
+                if (GetGrauEntrada(obj) >= 1 && GetGrauSaida(obj) >= 1)
+                {
+                    ciclo = true;
+                }
+                else
+                {
+                    ciclo = false;
+                    break;
+                }
+            }
+
+            return ciclo;
+
         }
 
         //Incremento todas as arestas do v1, após isso subtraio com as arestas de entrada.
